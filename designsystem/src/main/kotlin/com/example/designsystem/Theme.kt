@@ -62,4 +62,8 @@ object Theme {
     val spacing: Spacing
         @Composable
         get() = LocalSpacing.current
+
+    val sizing: Sizing
+        @Composable
+        get() = LocalSizing.current
 }
