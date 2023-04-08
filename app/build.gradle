@@ -1,0 +1,48 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+
+apply from: "${rootProject.projectDir}/config/gradle/build_scripts/android.gradle"
+apply from: "${rootProject.projectDir}/config/gradle/build_scripts/flavors.gradle"
+
+android {
+    namespace 'com.example.sportsFixtures'
+
+    defaultConfig {
+        applicationId "com.example.sportsFixtures"
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary true
+        }
+    }
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion '1.4.4'
+    }
+}
+
+dependencies {
+    implementation deps.module.common
+    implementation deps.module.domain
+    implementation deps.module.data
+    implementation deps.module.designsystem
+    implementation deps.module.core
+
+    implementation deps.core_ktx
+    implementation deps.di.koin
+    implementation deps.timber
+
+    testImplementation deps.test.junit
+    testImplementation deps.test.mockk
+    testImplementation deps.test.coroutines
+    testImplementation deps.test.turbine
+    testImplementation deps.test.kotest
+    androidTestImplementation platform(deps.compose_bom)
+    androidTestImplementation deps.test.compose
+}

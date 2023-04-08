@@ -1,0 +1,2 @@
+apply from: "${rootProject.projectDir}/config/gradle/build_scripts/android.gradle"
+apply from: "${rootProject.projectDir}/config/gradle/build_scripts/flavors.gradle"

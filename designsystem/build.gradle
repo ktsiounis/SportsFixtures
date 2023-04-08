@@ -1,0 +1,22 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
+apply from: "${rootProject.projectDir}/config/gradle/build_scripts/android-lib.gradle"
+
+android {
+    namespace 'com.example.designsystem'
+
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion '1.4.4'
+    }
+}
+
+dependencies {
+    api deps.ui
+    api platform(deps.compose_bom)
+    api deps.compose
+    debugApi deps.debug
+}

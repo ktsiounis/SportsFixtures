@@ -1,0 +1,13 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
+apply from: "${rootProject.projectDir}/config/gradle/build_scripts/android-lib.gradle"
+
+android {
+    namespace 'com.example.common'
+}
+
+dependencies {
+    implementation deps.coroutines
+    implementation deps.test.coroutines
+}
