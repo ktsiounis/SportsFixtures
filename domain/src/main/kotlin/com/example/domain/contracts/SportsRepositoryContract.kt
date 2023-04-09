@@ -8,7 +8,8 @@ import kotlinx.coroutines.flow.StateFlow
 
 interface SportsRepositoryContract {
 
-    suspend fun getSports(): Flow<Result<List<Sport>>>
-    fun setEventAsFavorite(event: Event, isFavorite: Boolean): List<Sport>
+    val sports: StateFlow<List<Sport>>
+    suspend fun fetchSports(): Flow<Result<List<Sport>>>
+    fun setEventAsFavorite(event: Event, isFavorite: Boolean)
 
 }

@@ -33,7 +33,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -50,7 +52,6 @@ import com.example.sportsFixtures.features.sportsBook.SportsBookScreenContract.E
 import com.example.sportsFixtures.features.sportsBook.SportsBookScreenContract.State
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
-import timber.log.Timber
 import java.util.Calendar
 import java.util.Date
 import kotlin.random.Random
@@ -126,7 +127,7 @@ private fun SportSectionView(
                     .padding(horizontal = spacing.spacing01)
                     .size(sizing.large),
                 painter = painterResource(id = sport.icon),
-                contentDescription = "",
+                contentDescription = stringResource(R.string.sport_section_icon_content_description),
                 tint = Color.White
             )
             Text(
@@ -142,7 +143,7 @@ private fun SportSectionView(
                     .size(sizing.xLarge)
                     .rotate(if (!isSectionExpanded) 180f else 0f),
                 painter = painterResource(id = R.drawable.arrow_down_24),
-                contentDescription = "",
+                contentDescription = stringResource(R.string.arrow_icon_for_section_expansion_content_description),
                 tint = Color.White
             )
         }
@@ -191,7 +192,7 @@ private fun EventView(
                     onEvent(Event.OnFavoriteButtonClicked(event, !event.isFavorite))
                 },
             painter = painterResource(id = if (event.isFavorite) R.drawable.baseline_star_24 else R.drawable.star_border_24),
-            contentDescription = "",
+            contentDescription = stringResource(R.string.favorite_icon_content_description),
             tint = if (event.isFavorite) StarFilled else StarBorder
         )
 
@@ -218,8 +219,9 @@ private fun CountdownTimer(endDate: Long) {
     val timeRemaining = remember { mutableStateOf("") }
     val date = Date(endDate*1000)
     val currentTime = remember { mutableStateOf(Calendar.getInstance()) }
+    val context = LocalContext.current
 
-    LaunchedEffect(true) {
+    LaunchedEffect(endDate) {
         while (currentTime.value.timeInMillis < date.time) {
             val diff = date.time - currentTime.value.timeInMillis
             val seconds = diff / 1000 % 60
@@ -231,7 +233,7 @@ private fun CountdownTimer(endDate: Long) {
             delay(1000)
             currentTime.value = Calendar.getInstance()
         }
-        timeRemaining.value = "COMPLETED"
+        timeRemaining.value = context.getString(R.string.event_completed)
     }
 
     Text(

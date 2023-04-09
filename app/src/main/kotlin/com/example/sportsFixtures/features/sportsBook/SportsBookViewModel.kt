@@ -1,11 +1,13 @@
 package com.example.sportsFixtures.features.sportsBook
 
+import androidx.lifecycle.viewModelScope
 import com.example.common.Result
 import com.example.domain.usecases.SportsUseCase
 import com.example.sportsFixtures.features.sportsBook.SportsBookScreenContract.Event
 import com.example.sportsFixtures.features.sportsBook.SportsBookScreenContract.State
 import com.example.sportsFixtures.features.sportsBook.SportsBookScreenContract.State.Effect
 import com.reydix.enter.core.mvi.CoreViewModel
+import kotlinx.coroutines.launch
 
 class SportsBookViewModel(
     private val sportsUseCase: SportsUseCase
@@ -14,21 +16,22 @@ class SportsBookViewModel(
     override suspend fun handleEvent(event: Event) {
         when(event) {
             Event.OnScreenInitialized -> {
-                sportsUseCase.getSports().collect{
+                sportsUseCase.fetchSports().collect{
                     when(it) {
-                        is Result.Success -> {
-                            setState { copy(sportsWithEvents = it.value) }
-                        }
                         is Result.Error -> {
                             setState { copy(errorMsg = it.message) }
                         }
+                        else -> {}
                     }
+                }
+
+                sportsUseCase.sports.collect {
+                    setState { copy(sportsWithEvents = it) }
                 }
             }
 
             is Event.OnFavoriteButtonClicked -> {
-                val updatedList = sportsUseCase.setEventAsFavorite(event.event, event.isFavorite)
-                setState { copy(sportsWithEvents = updatedList) }
+                sportsUseCase.setEventAsFavorite(event.event, event.isFavorite)
             }
         }
     }

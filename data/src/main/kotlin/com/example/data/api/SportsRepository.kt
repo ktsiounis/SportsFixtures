@@ -6,26 +6,37 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import com.example.common.Result
 import com.example.domain.models.Event
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 class SportsRepository(
     private val client: SportsApiClient
 ) : SportsRepositoryContract {
 
-    private var sports = mutableListOf<Sport>()
+    private val _sports = MutableStateFlow(emptyList<Sport>())
+    override val sports: StateFlow<List<Sport>> = _sports
 
-    override suspend fun getSports(): Flow<Result<List<Sport>>> = flowOf(
+    override suspend fun fetchSports(): Flow<Result<List<Sport>>> = flowOf(
         client.getSports().toSportsResult().also {
             if (it is Result.Success) {
-                sports = it.value.toMutableList()
+                _sports.value = it.value
             }
         }
     )
 
-    override fun setEventAsFavorite(event: Event, isFavorite: Boolean): List<Sport> {
-        sports.find { it.id == event.sportId }
-            ?.events?.find { it.id == event.id }
-            ?.isFavorite = isFavorite
-        return sports
+    override fun setEventAsFavorite(event: Event, isFavorite: Boolean) {
+        val updatedSports = mutableListOf<Sport>()
+        _sports.value.forEach { sport ->
+            if (sport.id == event.sportId) {
+                val updatedEvents= sport.events.map { innerEvent ->
+                    if (innerEvent.id == event.id) innerEvent.copy(isFavorite = isFavorite) else innerEvent
+                }
+                updatedSports.add(sport.copy(events = updatedEvents))
+            } else {
+                updatedSports.add(sport)
+            }
+        }
+        _sports.value = updatedSports
     }
 
 }

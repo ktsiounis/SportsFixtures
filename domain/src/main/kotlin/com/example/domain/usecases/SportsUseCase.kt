@@ -7,8 +7,9 @@ class SportsUseCase(
     private val restRepository: SportsRepositoryContract,
 ) {
 
-    suspend fun getSports() = restRepository.getSports()
+    val sports = restRepository.sports
+
+    suspend fun fetchSports() = restRepository.fetchSports()
     fun setEventAsFavorite(event: Event, isFavorite: Boolean) = restRepository.setEventAsFavorite(event, isFavorite)
-    fun getCachedSports() = restRepository
 
 }
