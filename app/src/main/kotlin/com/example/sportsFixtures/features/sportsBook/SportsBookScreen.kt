@@ -23,6 +23,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -47,23 +48,29 @@ import com.example.domain.models.Sport
 import com.example.sportsFixtures.R
 import com.example.sportsFixtures.features.sportsBook.SportsBookScreenContract.Event
 import com.example.sportsFixtures.features.sportsBook.SportsBookScreenContract.State
+import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
+import timber.log.Timber
+import java.util.Calendar
+import java.util.Date
 import kotlin.random.Random
 
 import com.example.domain.models.Event as SportEvent
 
 @Composable
 fun SportBookScreen(
-    modifier: Modifier
+    modifier: Modifier,
+    viewModel: SportsBookViewModel = koinViewModel()
 ) {
-    val viewModel: SportsBookViewModel = koinViewModel()
-    val state = viewModel.state().collectAsState()
+    val state by viewModel.state().collectAsState()
 
-    viewModel.onEvent(Event.OnScreenInitialized)
+    LaunchedEffect(Unit) {
+        viewModel.onEvent(Event.OnScreenInitialized)
+    }
 
     SportsBookContent(
         modifier = modifier,
-        uiState = state.value,
+        uiState = state,
         onEvent = { viewModel.onEvent(it) }
     )
 }
@@ -175,17 +182,8 @@ private fun EventView(
             .padding(horizontal = spacing.spacing0_05),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            modifier = Modifier
-                .border(
-                    border = BorderStroke(sizing.borderDefault, Color.White),
-                    shape = RoundedCornerShape(sizing.strokeDefault)
-                )
-                .padding(spacing.spacing0_05),
-            text = event.startTime.toString(),
-            style = Typography.bodySmall,
-            color = Color.White,
-        )
+        CountdownTimer(endDate = event.startTime)
+
         Icon(
             modifier = Modifier
                 .padding(vertical = spacing.spacing0_05)
@@ -196,6 +194,7 @@ private fun EventView(
             contentDescription = "",
             tint = if (event.isFavorite) StarFilled else StarBorder
         )
+
         Text(
             text = event.name.split("-")[0].trim(),
             style = Typography.bodySmall,
@@ -203,6 +202,7 @@ private fun EventView(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
+
         Text(
             text = event.name.split("-")[1].trim(),
             style = Typography.bodySmall,
@@ -211,6 +211,41 @@ private fun EventView(
             overflow = TextOverflow.Ellipsis
         )
     }
+}
+
+@Composable
+private fun CountdownTimer(endDate: Long) {
+    val timeRemaining = remember { mutableStateOf("") }
+    val date = Date(endDate*1000)
+    val currentTime = remember { mutableStateOf(Calendar.getInstance()) }
+
+    LaunchedEffect(true) {
+        while (currentTime.value.timeInMillis < date.time) {
+            val diff = date.time - currentTime.value.timeInMillis
+            val seconds = diff / 1000 % 60
+            val minutes = diff / (1000 * 60) % 60
+            val hours = diff / (1000 * 60 * 60) % 24
+
+            timeRemaining.value = "$hours:$minutes:$seconds"
+
+            delay(1000)
+            currentTime.value = Calendar.getInstance()
+        }
+        timeRemaining.value = "COMPLETED"
+    }
+
+    Text(
+        modifier = Modifier
+            .border(
+                border = BorderStroke(sizing.borderDefault, Color.White),
+                shape = RoundedCornerShape(sizing.strokeDefault)
+            )
+            .padding(spacing.spacing0_05),
+        text = timeRemaining.value,
+        style = Typography.bodySmall,
+        color = Color.White,
+    )
+
 }
 
 @Preview

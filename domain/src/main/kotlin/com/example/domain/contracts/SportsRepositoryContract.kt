@@ -4,10 +4,11 @@ import com.example.domain.models.Sport
 import kotlinx.coroutines.flow.Flow
 import com.example.common.Result
 import com.example.domain.models.Event
+import kotlinx.coroutines.flow.StateFlow
 
 interface SportsRepositoryContract {
 
     suspend fun getSports(): Flow<Result<List<Sport>>>
-    suspend fun setEventAsFavorite(event: Event, isFavorite: Boolean): Flow<List<Sport>>
+    fun setEventAsFavorite(event: Event, isFavorite: Boolean): List<Sport>
 
 }

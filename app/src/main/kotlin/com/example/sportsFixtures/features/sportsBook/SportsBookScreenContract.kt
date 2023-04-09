@@ -17,7 +17,7 @@ interface SportsBookScreenContract {
 
     data class State(
         val sportsWithEvents: List<Sport> = emptyList(),
-        val isLoading: Boolean = false,
+        val errorMsg: String? = null,
     ) : UiState {
 
         sealed interface Effect : UiEffect

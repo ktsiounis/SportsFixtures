@@ -11,21 +11,21 @@ class SportsRepository(
     private val client: SportsApiClient
 ) : SportsRepositoryContract {
 
-    private var sports = emptyList<Sport>()
+    private var sports = mutableListOf<Sport>()
 
     override suspend fun getSports(): Flow<Result<List<Sport>>> = flowOf(
         client.getSports().toSportsResult().also {
             if (it is Result.Success) {
-                sports = it.value
+                sports = it.value.toMutableList()
             }
         }
     )
 
-    override suspend fun setEventAsFavorite(event: Event, isFavorite: Boolean): Flow<List<Sport>> {
+    override fun setEventAsFavorite(event: Event, isFavorite: Boolean): List<Sport> {
         sports.find { it.id == event.sportId }
             ?.events?.find { it.id == event.id }
             ?.isFavorite = isFavorite
-        return flowOf(sports)
+        return sports
     }
 
 }

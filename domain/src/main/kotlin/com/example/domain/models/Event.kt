@@ -5,5 +5,5 @@ data class Event(
     val sportId: String,
     val name: String,
     val startTime: Long,
-    var isFavorite: Boolean = false,
+    var isFavorite: Boolean,
 )

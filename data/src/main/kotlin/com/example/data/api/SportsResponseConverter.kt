@@ -31,7 +31,8 @@ fun List<EventRaw?>?.toDomainEvents(): List<Event> {
                 name = raw?.name ?: "N/A",
                 id = raw?.id ?: "",
                 sportId = raw?.sportId ?: "",
-                startTime = raw?.startTime ?: -1
+                startTime = raw?.startTime ?: -1,
+                isFavorite = false
             )
         }
     } ?: emptyList()

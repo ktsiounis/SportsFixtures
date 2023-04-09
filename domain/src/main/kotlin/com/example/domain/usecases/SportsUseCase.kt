@@ -8,6 +8,7 @@ class SportsUseCase(
 ) {
 
     suspend fun getSports() = restRepository.getSports()
-    suspend fun setEventAsFavorite(event: Event, isFavorite: Boolean) = restRepository.setEventAsFavorite(event, isFavorite)
+    fun setEventAsFavorite(event: Event, isFavorite: Boolean) = restRepository.setEventAsFavorite(event, isFavorite)
+    fun getCachedSports() = restRepository
 
 }

@@ -6,7 +6,6 @@ import com.example.sportsFixtures.features.sportsBook.SportsBookScreenContract.E
 import com.example.sportsFixtures.features.sportsBook.SportsBookScreenContract.State
 import com.example.sportsFixtures.features.sportsBook.SportsBookScreenContract.State.Effect
 import com.reydix.enter.core.mvi.CoreViewModel
-import kotlinx.coroutines.flow.collect
 
 class SportsBookViewModel(
     private val sportsUseCase: SportsUseCase
@@ -18,21 +17,18 @@ class SportsBookViewModel(
                 sportsUseCase.getSports().collect{
                     when(it) {
                         is Result.Success -> {
-                            setState { copy(isLoading = false, sportsWithEvents = it.value) }
+                            setState { copy(sportsWithEvents = it.value) }
                         }
                         is Result.Error -> {
-
+                            setState { copy(errorMsg = it.message) }
                         }
                     }
                 }
             }
 
             is Event.OnFavoriteButtonClicked -> {
-                sportsUseCase
-                    .setEventAsFavorite(event.event, event.isFavorite)
-                    .collect{
-                        setState { copy(sportsWithEvents = it) }
-                    }
+                val updatedList = sportsUseCase.setEventAsFavorite(event.event, event.isFavorite)
+                setState { copy(sportsWithEvents = updatedList) }
             }
         }
     }
