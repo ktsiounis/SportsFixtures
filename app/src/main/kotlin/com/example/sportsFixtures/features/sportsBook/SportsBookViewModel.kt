@@ -30,9 +30,9 @@ class SportsBookViewModel(
                 }
             }
 
-            is Event.OnFavoriteButtonClicked -> {
-                sportsUseCase.setEventAsFavorite(event.event, event.isFavorite)
-            }
+            is Event.OnFavoriteButtonClicked -> sportsUseCase.setEventAsFavorite(event.event, event.isFavorite)
+
+            Event.OnErrorMessageShown -> setState { copy(errorMsg = null) }
         }
     }
 

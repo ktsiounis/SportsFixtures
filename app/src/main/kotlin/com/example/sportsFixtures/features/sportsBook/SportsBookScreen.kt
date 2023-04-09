@@ -1,5 +1,7 @@
 package com.example.sportsFixtures.features.sportsBook
 
+import android.widget.Toast
+import android.widget.Toast.LENGTH_SHORT
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
@@ -37,6 +39,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.designsystem.BlueSportSectionSep
@@ -74,6 +77,11 @@ fun SportBookScreen(
         uiState = state,
         onEvent = { viewModel.onEvent(it) }
     )
+
+    if (!state.errorMsg.isNullOrBlank()) {
+        Toast.makeText(LocalContext.current, state.errorMsg, LENGTH_SHORT).show()
+        viewModel.onEvent(Event.OnErrorMessageShown)
+    }
 }
 
 @Composable
@@ -83,19 +91,36 @@ private fun SportsBookContent(
     onEvent: (Event) -> Unit
 ) {
 
+    if (uiState.sportsWithEvents.isNotEmpty()) {
+        SportList(
+            modifier = modifier,
+            sportsWithEvents = uiState.sportsWithEvents,
+            onEvent = onEvent
+        )
+    } else {
+        EmptyState(modifier)
+    }
+
+}
+
+@Composable
+private fun SportList(
+    modifier: Modifier,
+    sportsWithEvents: List<Sport>,
+    onEvent: (Event) -> Unit
+) {
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
             .background(color = DarkBlueBackground)
     ) {
-        items(uiState.sportsWithEvents) {
+        items(sportsWithEvents) {
             SportSectionView(
                 sport = it,
                 onEvent = onEvent
             )
         }
     }
-
 }
 
 @Composable
@@ -250,6 +275,35 @@ private fun CountdownTimer(endDate: Long) {
 
 }
 
+@Composable
+private fun EmptyState(
+    modifier: Modifier
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(color = DarkBlueBackground),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Icon(
+            modifier = Modifier.size(sizing.xLarge),
+            painter = painterResource(id = R.drawable.warning_amber_24),
+            contentDescription = stringResource(R.string.warning_icon_for_empty_state_content_description),
+            tint = Color.White
+        )
+        Text(
+            modifier = Modifier
+                .padding(horizontal = spacing.spacing05)
+                .padding(top = spacing.spacing01),
+            text = stringResource(R.string.empty_state_message),
+            style = Typography.titleMedium,
+            color = Color.White,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
 @Preview
 @Composable
 private fun PreviewSportSectionView() {
@@ -268,6 +322,43 @@ private fun PreviewSportSectionView() {
                 )
             }
         ),
+        onEvent = {}
+    )
+}
+
+@Preview
+@Composable
+private fun PreviewSportsBookContent() {
+    SportsBookContent(
+        modifier = Modifier,
+        uiState = State(
+            sportsWithEvents = MutableList(7) {
+                Sport(
+                    name = "FOOTBALL",
+                    id = "FOOT",
+                    icon = com.example.common.R.drawable.soccer_24,
+                    events = MutableList(6) {
+                        SportEvent(
+                            id = "",
+                            sportId = "",
+                            name = "Panathinaikos - Olympiakos",
+                            startTime = 1681795200,
+                            isFavorite = Random.nextBoolean()
+                        )
+                    }
+                )
+            }
+        ),
+        onEvent = {}
+    )
+}
+
+@Preview
+@Composable
+private fun PreviewSportsBookContentEmpty() {
+    SportsBookContent(
+        modifier = Modifier,
+        uiState = State(),
         onEvent = {}
     )
 }

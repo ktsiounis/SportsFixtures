@@ -4,4 +4,6 @@
     <string name="sport_section_icon_content_description">Sport Section Icon</string>
     <string name="arrow_icon_for_section_expansion_content_description">Arrow Icon For Section Expansion</string>
     <string name="favorite_icon_content_description">Favorite Icon</string>
+    <string name="empty_state_message">Oops! It seems there are no data for now. Maybe you should try again later.</string>
+    <string name="warning_icon_for_empty_state_content_description">Warning Icon for Empty State</string>
 </resources>

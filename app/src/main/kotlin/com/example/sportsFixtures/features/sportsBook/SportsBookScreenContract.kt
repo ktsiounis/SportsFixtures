@@ -12,6 +12,7 @@ interface SportsBookScreenContract {
 
         object OnScreenInitialized : Event
         data class OnFavoriteButtonClicked(val event: SportEvent, val isFavorite: Boolean) : Event
+        object OnErrorMessageShown : Event
 
     }
 
