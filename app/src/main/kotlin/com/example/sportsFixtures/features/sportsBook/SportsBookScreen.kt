@@ -38,10 +38,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.common.TestTag
 import com.example.designsystem.BlueSportSectionSep
 import com.example.designsystem.DarkBlueBackground
 import com.example.designsystem.StarBorder
@@ -62,7 +65,7 @@ import kotlin.random.Random
 import com.example.domain.models.Event as SportEvent
 
 @Composable
-fun SportBookScreen(
+internal fun SportBookScreen(
     modifier: Modifier,
     viewModel: SportsBookViewModel = koinViewModel()
 ) {
@@ -85,7 +88,7 @@ fun SportBookScreen(
 }
 
 @Composable
-private fun SportsBookContent(
+internal fun SportsBookContent(
     modifier: Modifier,
     uiState: State,
     onEvent: (Event) -> Unit
@@ -135,6 +138,7 @@ private fun SportSectionView(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = spacing.spacing01)
+            .semantics { testTag = TestTag.SportsBookScreen.SPORT_SECTION }
     ) {
 
         Row(
@@ -144,7 +148,8 @@ private fun SportSectionView(
                 .padding(vertical = spacing.spacing01)
                 .clickable {
                     isSectionExpanded = !isSectionExpanded
-                },
+                }
+                .semantics { testTag = TestTag.SportsBookScreen.SPORT_SECTION_TITLE + " - ${sport.id}" },
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
@@ -180,7 +185,8 @@ private fun SportSectionView(
         ) {
             LazyRow(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .semantics { testTag = TestTag.SportsBookScreen.EVENTS_ROW + " - ${sport.id}" },
                 horizontalArrangement = Arrangement.spacedBy(spacing.spacing0_05)
             ) {
                 items(sport.events.sortedBy { event -> !event.isFavorite }) {
@@ -205,7 +211,8 @@ private fun EventView(
         modifier = Modifier
             .width(sizing.sportEventItemWidth)
             .padding(vertical = spacing.spacing01)
-            .padding(horizontal = spacing.spacing0_05),
+            .padding(horizontal = spacing.spacing0_05)
+            .semantics { testTag = TestTag.SportsBookScreen.EVENT_ITEM + " - ${event.sportId}" },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CountdownTimer(endDate = event.startTime)
@@ -282,7 +289,8 @@ private fun EmptyState(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(color = DarkBlueBackground),
+            .background(color = DarkBlueBackground)
+            .semantics { testTag = TestTag.SportsBookScreen.EMPTY_STATE},
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {

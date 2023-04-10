@@ -79,6 +79,7 @@ ext.deps = [
 
         'debug'                         : [
                 "androidx.compose.ui:ui-tooling",
+                "androidx.compose.ui:ui-test-manifest",
         ],
 
         'timber'                        : [

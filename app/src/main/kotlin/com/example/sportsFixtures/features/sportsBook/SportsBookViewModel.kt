@@ -1,13 +1,11 @@
 package com.example.sportsFixtures.features.sportsBook
 
-import androidx.lifecycle.viewModelScope
 import com.example.common.Result
 import com.example.domain.usecases.SportsUseCase
 import com.example.sportsFixtures.features.sportsBook.SportsBookScreenContract.Event
 import com.example.sportsFixtures.features.sportsBook.SportsBookScreenContract.State
 import com.example.sportsFixtures.features.sportsBook.SportsBookScreenContract.State.Effect
 import com.reydix.enter.core.mvi.CoreViewModel
-import kotlinx.coroutines.launch
 
 class SportsBookViewModel(
     private val sportsUseCase: SportsUseCase

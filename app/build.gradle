@@ -45,4 +45,5 @@ dependencies {
     testImplementation deps.test.kotest
     androidTestImplementation platform(deps.compose_bom)
     androidTestImplementation deps.test.compose
+    debugImplementation deps.debug
 }
